@@ -181,9 +181,23 @@ envoy::config::cluster::v3::Cluster HdsDelegate::createClusterConfig(
 
   // TODO(lilika): Add support for optional per-endpoint health checks
 
+  envoy::extensions::upstreams::http::v3::HttpProtocolOptions protocol_options;
+  protocol_options.mutable_explicit_http_config()
+      ->mutable_http2_protocol_options()
+      ->use_oghttp2_codec();
+
   // Add healthchecks to cluster
   for (auto& health_check : cluster_health_check.health_checks()) {
     cluster_config.add_health_checks()->MergeFrom(health_check);
+
+    // mark the cluster as being HTTP/2 if there is a GRPC health check
+    if (health_check.has_grpc_health_check()) {
+      ENVOY_LOG(debug, "Adding HTTP/2 to cluster with gRPC health check");
+
+      (*cluster_config.mutable_typed_extension_protocol_options())
+          ["envoy.extensions.upstreams.http.v3.HttpProtocolOptions"]
+              .PackFrom(protocol_options);
+    }
   }
 
   // Add transport_socket_match to cluster for use in host connections.
@@ -353,6 +367,14 @@ HdsCluster::HdsCluster(Server::Configuration::ServerFactoryContext& server_conte
   // Set initial hashes for possible delta updates.
   config_hash_ = MessageUtil::hash(cluster_);
   socket_match_hash_ = RepeatedPtrUtil::hash(cluster_.transport_socket_matches());
+  http_proto_options_hash_ = 0;
+  if (cluster_.mutable_typed_extension_protocol_options() != nullptr &&
+      cluster_.mutable_typed_extension_protocol_options()->contains(
+          "envoy.extensions.upstreams.http.v3.HttpProtocolOptions")) {
+    http_proto_options_hash_ =
+        MessageUtil::hash((*cluster_.mutable_typed_extension_protocol_options())
+                              ["envoy.extensions.upstreams.http.v3.HttpProtocolOptions"]);
+  }
 
   info_ = info_factory.createClusterInfo(
       {server_context, cluster_, bind_config, stats_, ssl_context_manager_, added_via_api_, tls});
@@ -406,8 +428,19 @@ absl::Status HdsCluster::update(envoy::config::cluster::v3::Cluster cluster,
     // in info_.
     bool update_cluster_info = false;
     const uint64_t socket_match_hash = RepeatedPtrUtil::hash(cluster_.transport_socket_matches());
-    if (socket_match_hash_ != socket_match_hash) {
+    const uint64_t http_proto_options_hash = 0;
+    if (cluster_.mutable_typed_extension_protocol_options() != nullptr &&
+        cluster_.mutable_typed_extension_protocol_options()->contains(
+            "envoy.extensions.upstreams.http.v3.HttpProtocolOptions")) {
+      http_proto_options_hash_ =
+          MessageUtil::hash((*cluster_.mutable_typed_extension_protocol_options())
+                                ["envoy.extensions.upstreams.http.v3.HttpProtocolOptions"]);
+    }
+
+    if (socket_match_hash_ != socket_match_hash ||
+        http_proto_options_hash_ != http_proto_options_hash) {
       socket_match_hash_ = socket_match_hash;
+      http_proto_options_hash_ = http_proto_options_hash;
       update_cluster_info = true;
       info_ = info_factory.createClusterInfo({server_context_, cluster_, bind_config, stats_,
                                               ssl_context_manager_, added_via_api_, tls});

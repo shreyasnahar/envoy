@@ -90,6 +90,7 @@ private:
   bool initialized_ = false;
   uint64_t config_hash_;
   uint64_t socket_match_hash_;
+  uint64_t http_proto_options_hash_;
 
   HostVectorSharedPtr hosts_;
   HostsPerLocalitySharedPtr hosts_per_locality_;
