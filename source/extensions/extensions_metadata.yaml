@@ -184,6 +184,20 @@ envoy.compression.zstd.decompressor:
   status: stable
   type_urls:
   - envoy.extensions.compression.zstd.decompressor.v3.Zstd
+envoy.config.validators.azure_waf_listener:
+  categories:
+  - envoy.config.validators
+  security_posture: unknown
+  status: stable
+  type_urls:
+  - envoy.extensions.config.validators.azure_waf_listener.v3.AzureWafListenerValidator
+envoy.config.validators.azure_waf_route:
+  categories:
+  - envoy.config.validators
+  security_posture: unknown
+  status: stable
+  type_urls:
+  - envoy.extensions.config.validators.azure_waf_route.v3.AzureWafRouteValidator
 envoy.config.validators.minimum_clusters_validator:
   categories:
   - envoy.config.validators

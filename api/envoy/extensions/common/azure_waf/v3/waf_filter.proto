@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package waf;
+
+import "validate/validate.proto";
+import "envoy/config/core/v3/grpc_service.proto";
+
+message PolicyConfig {
+    string policy_id = 1;
+    string config_id = 2;
+    string scope_name = 3;
+    string scope = 4;
+    envoy.config.core.v3.GrpcService grpc_service = 5 [(validate.rules).message = {required: true}];
+}
+
+message PerRoutePolicyConfig {
+    string policy_id = 1 [(validate.rules).string.min_bytes = 1];
+    string config_id = 2 [(validate.rules).string.min_bytes = 1];
+    string scope_name = 3 [(validate.rules).string.min_bytes = 1];
+    string scope = 4 [(validate.rules).string.min_bytes = 1];
+}

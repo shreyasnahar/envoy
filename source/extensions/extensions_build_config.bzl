@@ -44,6 +44,8 @@ EXTENSIONS = {
     #
 
     "envoy.config.validators.minimum_clusters_validator":     "//source/extensions/config/validators/minimum_clusters:config",
+    "envoy.config.validators.azure_waf_listener_validator":     "//source/extensions/config/validators/azure_waf_listener:config",
+    "envoy.config.validators.azure_waf_route_validator":     "//source/extensions/config/validators/azure_waf_route:config",
 
     #
     # gRPC Credentials Plugins
@@ -137,6 +139,7 @@ EXTENSIONS = {
     "envoy.filters.http.api_key_auth":                  "//source/extensions/filters/http/api_key_auth:config",
     "envoy.filters.http.aws_lambda":                    "//source/extensions/filters/http/aws_lambda:config",
     "envoy.filters.http.aws_request_signing":           "//source/extensions/filters/http/aws_request_signing:config",
+    "envoy.filters.http.azure_waf":                     "//source/extensions/filters/http/azure_waf:config",
     "envoy.filters.http.bandwidth_limit":               "//source/extensions/filters/http/bandwidth_limit:config",
     "envoy.filters.http.basic_auth":                    "//source/extensions/filters/http/basic_auth:config",
     "envoy.filters.http.buffer":                        "//source/extensions/filters/http/buffer:config",

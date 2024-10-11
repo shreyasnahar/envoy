@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package wafservice;
+
+service WafService {
+  // EvalRequest rpc method is used by the filter to stream http requests to waf
+  rpc EvalRequest (stream WafHttpRequest) returns (WafDecision) {}
+  // PoliciesExist rpc method is used by the custom config validators to check if the policies referenced in envoy config are present with WAF.
+  rpc PoliciesExist (CheckPoliciesRequest) returns (CheckPoliciesResponse) {}
+}
+
+message HeaderPair {
+   bytes key = 1;
+   bytes value = 2;
+}
+
+message WafHttpRequest {
+    // Each message sent on the grpc stream would either be HeadersAndFirstChunk (headers and first bodychunk) or a body chunk
+    oneof content {
+        HeadersAndFirstChunk headersandfirstchunk = 1;
+        NextBodyChunk nextbodychunk = 2;
+    }
+}
+
+message HeadersAndFirstChunk {
+  // transactionid is used to uniquely identify a request
+  string transactionid = 11;
+  // remoteAddr is the client ip address
+  string remoteAddr = 9;
+  // configid specifies the waf policy that should be applied for this request
+  string configid = 7;
+  // metadata for logging/metrics
+  RequestLogMetaData metadata = 8;
+  // Request method
+  string method = 1;
+  // Request uri
+  string uri = 2;
+  // Re-written request uri
+  bytes uriparsed = 12;
+  string protocol = 10;
+  string querystring = 13;
+  string protonum = 14;
+  string requestline = 15;
+  string filename = 16;
+  // Request body length. Not setting it in the envoy filter.
+  uint32 reqbodylength = 17;
+  // Request headers
+  repeated HeaderPair headers = 3;
+  bytes firstbodychunk = 4;
+  // Flag to indicate if there is body
+  bool morebodychunks = 5;
+}
+
+message RequestLogMetaData {
+  string scope = 1;
+  string scopename = 2;
+  string policyid = 3;
+}
+
+message NextBodyChunk {
+  bytes bodychunk = 1;
+  bool morebodychunks = 2;
+}
+
+// Return message from Waf service to indicate whether to allow or block the request
+message WafDecision {
+  bool allow = 1 [deprecated=true];
+
+  enum Action {
+    UNINITIALIZED = 0;
+    PASS = 1;
+    ALLOW = 2;
+    BLOCK = 3;
+    CUSTOM = 4;
+    JSCHALLENGE = 5;
+  }
+  Action action = 2;
+  CustomResponse customresponse = 3;
+  JSChallengeResponse jschallengeresponse = 4;
+  ResponseSetCookie  responsesetcookie = 5;
+}
+
+message CustomResponse {
+  uint32 statuscode = 1;
+  string bodylocation = 2;
+}
+
+message JSChallengeResponse {
+  string bodycontent = 1;
+}
+
+message ResponseSetCookie {
+  string cookiename = 1;
+  string cookievalue = 2;
+}
+
+// Request to WAF containing the list if policies to validate
+message CheckPoliciesRequest {
+  repeated string policies = 1;
+}
+
+// Response from WAF indicating whether the policies are present in WAF
+message CheckPoliciesResponse {
+  enum PoliciesPresent {
+    NONE = 0;
+    FEW = 1;
+    ALL = 2;
+    EMPTY = 3;
+  }
+  PoliciesPresent policiesPresent = 1;
+}

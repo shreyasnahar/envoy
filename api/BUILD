@@ -155,6 +155,8 @@ proto_library(
         "//envoy/extensions/compression/gzip/decompressor/v3:pkg",
         "//envoy/extensions/compression/zstd/compressor/v3:pkg",
         "//envoy/extensions/compression/zstd/decompressor/v3:pkg",
+        "//envoy/extensions/config/validators/azure_waf_listener/v3:pkg",
+        "//envoy/extensions/config/validators/azure_waf_route/v3:pkg",
         "//envoy/extensions/config/validators/minimum_clusters/v3:pkg",
         "//envoy/extensions/dynamic_modules/v3:pkg",
         "//envoy/extensions/early_data/v3:pkg",
