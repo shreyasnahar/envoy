@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package envoy.extensions.formatter.redacted_req.v3;
+
+import "udpa/annotations/status.proto";
+
+option java_package = "io.envoyproxy.envoy.extensions.formatter.redacted_req.v3";
+option java_outer_classname = "RedactedReqProto";
+option java_multiple_files = true;
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/extensions/formatter/redacted_req/v3;redacted_reqv3";
+option (udpa.annotations.file_status).package_version_status = ACTIVE;
+
+// Configuration for the Redacted Req formatter.
+message RedactedReq {
+}

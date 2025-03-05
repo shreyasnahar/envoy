@@ -455,6 +455,7 @@ EXTENSIONS = {
     "envoy.formatter.cel":                              "//source/extensions/formatter/cel:config",
     "envoy.formatter.metadata":                         "//source/extensions/formatter/metadata:config",
     "envoy.formatter.req_without_query":                "//source/extensions/formatter/req_without_query:config",
+    "envoy.formatter.redacted_req":                     "//source/extensions/formatter/redacted_req:config",
 
     #
     # Key value store
