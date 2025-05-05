@@ -405,6 +405,13 @@ envoy.filters.http.file_system_buffer:
   status: wip
   type_urls:
   - envoy.extensions.filters.http.file_system_buffer.v3.FileSystemBufferFilterConfig
+envoy.filters.http.request_buffer:
+  categories:
+  - envoy.filters.http
+  security_posture: unknown
+  status: wip
+  type_urls:
+  - envoy.extensions.filters.http.request_buffer.v3.RequestBufferFilterConfig
 envoy.filters.http.gcp_authn:
   categories:
   - envoy.filters.http
