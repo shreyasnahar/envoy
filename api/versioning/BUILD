@@ -142,6 +142,7 @@ proto_library(
         "//envoy/extensions/filters/http/json_to_metadata/v3:pkg",
         "//envoy/extensions/filters/http/jwt_authn/v3:pkg",
         "//envoy/extensions/filters/http/kill_request/v3:pkg",
+        "//envoy/extensions/filters/http/link_id_validation/v3:pkg",
         "//envoy/extensions/filters/http/local_ratelimit/v3:pkg",
         "//envoy/extensions/filters/http/lua/v3:pkg",
         "//envoy/extensions/filters/http/oauth2/v3:pkg",

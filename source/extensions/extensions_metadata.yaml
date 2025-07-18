@@ -624,6 +624,13 @@ envoy.filters.listener.http_inspector:
   status: stable
   type_urls:
   - envoy.extensions.filters.listener.http_inspector.v3.HttpInspector
+envoy.filters.http.link_id_validation:
+  categories:
+  - envoy.filters.http
+  security_posture: robust_to_untrusted_downstream
+  status: stable
+  type_urls:
+  - envoy.extensions.filters.http.link_id_validation.v3.LinkIdValidationConfig
 envoy.filters.listener.local_ratelimit:
   categories:
   - envoy.filters.listener
